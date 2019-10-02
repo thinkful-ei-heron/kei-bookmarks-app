@@ -2,30 +2,60 @@
   box-sizing: border-box;
 }
 
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
 .title {
   text-align: center;
   font-family: 'Roboto', sans-serif;
 }
 
+.sub-title {
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  margin: 5px;
+}
+
+.bookmarkName, .bookmarkRating {
+  margin: 5px;
+}
+
+.descriptionExpanded {
+  font-size: 14pt;
+}
+
 .buttonContainer {
   display: flex;
   justify-content: center;
+  min-height: 35px;
 }
 
+.initialButton {
+  min-height: 35px;
+  font-size: 14pt;
+}
 .dropdownContent {
   width: 38%;
+  text-align: center;
+  font-size: 14pt;
 }
 
 #js-new-filter-form {
   width: 38%;
 }
 
+.newBookmarkURLInput {
+  margin-bottom: 15px;
+}
+
 .newBookmark {
   width: 100%;
 }
 
-
-
+.bookmarkContainer {
+  text-align: center;
+}
 
 .bookmarksContainer {
   border-width: 1px;
@@ -33,7 +63,7 @@
   margin: 2%;
 }
 
-.singleBookmarkContainer {
+.single-bookmark-container {
   border-width: 1px;
   border-style: solid;
   margin: 0px;
@@ -51,7 +81,7 @@
   font-size: 16pt;
 }
 
-#newBookmarkURL, #newBookmarkName {
+#newBookmarkURL, #new-bookmark-name {
   display: block;
   width: 100%;
   font-size: 16pt;
@@ -60,17 +90,22 @@
 .starRating {
   display: block;
   text-align: center;
-  width: 100%;
+  margin: 15px;
+  font-size: 14pt;
 }
 
 .descriptionSubmit {
   display: block;
   padding: 0px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14pt;
 }
 
 .descriptionTextArea {
   width: 100%;
   height: 100%;
+  font-size: 14pt;
+  font-family: 'Roboto', sans-serif;
 }
 
 .descriptionSubmit {
@@ -78,13 +113,13 @@
 }
 
 .visitButton, .deleteButton, .editButton {
-  display: block;
+  display: inline-block;
   margin: auto;
   margin-top: 5px;
   margin-bottom: 5px;
   min-width: 25%;
   min-height: 35px;
-  font-size: 10pt;
+  font-size: 12pt;
 }
 
 .visitLink {
@@ -96,4 +131,16 @@
   text-align: center;
   margin-left: 5px;
   margin-right: 5px;
+}
+
+.checked {
+  color: orange;
+}
+
+@media screen and (min-width: 768px) {
+  .main {
+    max-width: 768px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }

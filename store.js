@@ -3,6 +3,7 @@ let adding = false;
 let error = false;
 let expanded = false;
 let filter = 0;
+let edit = false;
 
 const getIdFromElement = function(item) {
   return $(item).find('.bookmarkContainer').data('bookmark-id');
@@ -22,9 +23,7 @@ const deleteBookmark = function(id){
 
 const updateBookmark = function(id, newData){
   let currentBookmark = this.findById(id);
-  console.log(newData);
   Object.assign(currentBookmark, newData);
-  console.log(currentBookmark, 'in updatebookmark');
 };
 
 export default {
@@ -33,6 +32,7 @@ export default {
   error,
   expanded,
   filter,
+  edit,
   findById,
   addBookmark,
   deleteBookmark,

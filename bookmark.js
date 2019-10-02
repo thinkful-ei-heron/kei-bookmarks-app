@@ -4,7 +4,7 @@ import api from './api.js';
 const createBookmarkObjectFromForm = function() {
   let formData = new FormData(document.getElementById('newBookmarkForm'));
   let bookmarkObject = {
-    title: formData.get('newBookmarkName'),
+    title: formData.get('new-bookmark-name'),
     rating: formData.get('rating'),
     url: formData.get('newBookmarkURL'),
     desc: formData.get('description'),
@@ -21,11 +21,22 @@ const createUpdateObjectFromForm = function() {
   return bookmarkObject;
 };
 
+const starRatingHTML = function(rating){
+  let htmlString = '';
+  for (let i = 0; i < rating; i++){
+    htmlString += '<span class="fa fa-star checked"></span>';
+  }
+  for (let j = 0; j < (5 - rating); j++){
+    htmlString += '<span class="fa fa-star"></span>';
+  }
+  return htmlString;
+};
+
 const generateBookmarkHTML = function(bookmark){
   if(bookmark.expanded){
     return `
-    <div class="bookmarkContainer" data-bookmark-url = ${bookmark.url} data-bookmark-id = ${bookmark.id}>
-      <p class="singleBookmarkContainer"><span class="bookmarkName">${bookmark.title}</span><span class="bookmarkRating">Rating: ${bookmark.rating} </span></p>
+    <div class="bookmarkContainer" data-bookmark-url= ${bookmark.url} data-bookmark-id= ${bookmark.id}>
+      <p class="single-bookmark-container"><span class="bookmarkName">${bookmark.title}</span><span class="bookmarkRating">${starRatingHTML(bookmark.rating)} </span></p>
       <div class="bookmarkExpanded">
         <a class="visitLink" href = '${bookmark.url}'><button class="visitButton">Visit Site!</button></a>
       </div>
@@ -39,7 +50,7 @@ const generateBookmarkHTML = function(bookmark){
   } else {
     return `
     <div class="bookmarkContainer" data-bookmark-url = ${bookmark.url} data-bookmark-id = ${bookmark.id}>
-      <p class="singleBookmarkContainer"><span class="bookmarkName">${bookmark.title}</span><span class="bookmarkRating">Rating: ${bookmark.rating}</span></p>
+      <p class="single-bookmark-container"><span class="bookmarkName">${bookmark.title}</span><span class="bookmarkRating">${starRatingHTML(bookmark.rating)}</span></p>
     </div> `;
   }
 };
@@ -50,54 +61,43 @@ const generateBookmarkList = function(bookmarkList){
   return bookmarks.join('');
 };
 
+const ratingAndDescHTML = function(desc='', typeOfPost){
+  return `
+  <label class="starRating"><b>Rating:</b>
+    <input id="rating5" type="radio" name="rating" value="5" oninvalid="alert('Please select a rating!');" required>
+    <label for="rating5">5</label>
+    <input id="rating4" type="radio" name="rating" value="4" required>
+    <label for="rating4">4</label>
+    <input id="rating3" type="radio" name="rating" value="3" required>
+    <label for="rating3">3</label>
+    <input id="rating2" type="radio" name="rating" value="2" required>
+    <label for="rating2">2</label>
+    <input id="rating1" type="radio" name="rating" value="1" required>
+    <label for="rating1">1</label>
+  </label>
+  <textarea rows = 10 class = "descriptionTextArea" name="description" placeholder="Description" oninvalid="alert('Please enter a description!');" required>${desc}</textarea>
+  <input type="submit" class ="descriptionSubmit" name="description" value="${typeOfPost} Bookmark" required>`;
+};
+
 const addBookmarkFormHTML = function(edit = false, id){
   if (edit){
-    console.log('inside edit is true branch');
     let temp = store.findById(id);
-    console.log(temp.title);
     $('.js-main-space').html(`
     <form id="editBookmarkForm" class="editBookmarkForm" name="editBookmarkForm">
-      <h2>${temp.title}</h2>
-      <h2>${temp.url}</h2>
-      <span class="starRating">
-          <input id="rating5" type="radio" name="rating" value="5" oninvalid="alert('Please select a rating!');" required>
-          <label for="rating5">5</label>
-          <input id="rating4" type="radio" name="rating" value="4" required>
-          <label for="rating4">4</label>
-          <input id="rating3" type="radio" name="rating" value="3" required>
-          <label for="rating3">3</label>
-          <input id="rating2" type="radio" name="rating" value="2" required>
-          <label for="rating2">2</label>
-          <input id="rating1" type="radio" name="rating" value="1" required>
-          <label for="rating1">1</label>
-        </span>
-      <textarea rows = 10 class = "descriptionTextArea" name="description" placeholder="Description" oninvalid="alert('Please enter a description!');" required>${temp.desc}</textarea>
-      <input type="submit" class ="descriptionSubmit" name="description" required>
+      <h2 class="sub-title">${temp.title}</h2>
+      <h2 class="sub-title">${temp.url}</h2>
+      ${ratingAndDescHTML(temp.desc, 'Edit')}
     </form>
     `);
   } else {
-    console.log('in the else branch for some reason');
     $('.js-main-space').html(`
     <form id="newBookmarkForm" class="newBookmarkForm" name="newBookmarkForm">
       <label class="newBookmarkURLInput" for="newBookmarkURL">Add New Bookmark: </label>
       <input class="newBookmarkURLInput" type="url" name="newBookmarkURL" id="newBookmarkURL" placeholder="http://www.wikipedia.org" oninvalid="alert('Please enter a valid URL. Do not forget the https protocol!');" required/>
-      <label for="newBookmarkName" name="newBookmarkName">Title Your Bookmark:</label>
-      <input class="newBookmarkNameInput" type= "text" name="newBookmarkName" id="newBookmarkName" placeholder="Wikipedia Homepage" oninvalid="alert('Please enter a title!');" required/>
-      <span class="starRating">
-          <input id="rating5" type="radio" name="rating" value="5" oninvalid="alert('Please select a rating!');" required>
-          <label for="rating5">5</label>
-          <input id="rating4" type="radio" name="rating" value="4" required>
-          <label for="rating4">4</label>
-          <input id="rating3" type="radio" name="rating" value="3" required>
-          <label for="rating3">3</label>
-          <input id="rating2" type="radio" name="rating" value="2" required>
-          <label for="rating2">2</label>
-          <input id="rating1" type="radio" name="rating" value="1" required>
-          <label for="rating1">1</label>
-        </span>
-      <textarea rows = 10 class = "descriptionTextArea" name="description" placeholder="Description" oninvalid="alert('Please enter a description!');" required></textarea>
-      <input type="submit" class ="descriptionSubmit" name="description" required>
-    </form>
+      <label for="new-bookmark-name" name="new-bookmark-name">Title Your Bookmark:</label>
+      <input class="newBookmarkNameInput" type= "text" name="new-bookmark-name" id="new-bookmark-name" placeholder="Wikipedia Homepage" oninvalid="alert('Please enter a title!');" required/>
+      ${ratingAndDescHTML('', 'Add')}
+      </form>
     `);
   }
 };
@@ -125,11 +125,9 @@ const addButtonAndBookmarksHTML = function() {
 };
 
 const renderData = function(filter = false, edit = false, id) {
-  console.log('running renderdata');
   renderError();
   if (store.adding){
     if (edit){
-      console.log('about to addbookmarkformhtml');
       addBookmarkFormHTML(true, id);
     } else {
       addBookmarkFormHTML();
@@ -253,17 +251,17 @@ const handleFilter = function(){
   });
 };
 
-const handleAddingEditMenu = function(){
+const handleEdit = function(){
   let id;
   $('.js-main-space').on('click', '.editButton', function(event) {
     event.preventDefault();
     let obj = $(this).closest('.bookmarkContainer');
     id = obj.data('bookmark-id');
     store.adding = true;
-    console.log('before renderdata');
-    renderData(true, true, id);
-    console.log('after handleaddingeditmenu renderdata');
-    handlePostEdit(id);  
+    store.edit = true;
+    renderData(store.filter>0, store.edit, id);
+    handlePostEdit(id); 
+    store.edit = false; 
   });
 };
 
@@ -274,9 +272,8 @@ const handlePostEdit = function(id) {
     storeContract();
     store.expanded = false;
     let bookmarkObject = createUpdateObjectFromForm();
-    console.log(id);
-    console.log(bookmarkObject);
     store.updateBookmark(id, bookmarkObject);
+    //passing function param
     api.updateBookmark(id, bookmarkObject)
       .then(newBookmark => {
         renderData();
@@ -294,7 +291,7 @@ const bindEventListeners = function(){
   handleDeleteBookmark();
   handleExpand();
   handleFilter();
-  handleAddingEditMenu();
+  handleEdit();
 };
 
 const main = function(){
