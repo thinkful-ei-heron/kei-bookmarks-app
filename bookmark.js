@@ -294,9 +294,8 @@ const bindEventListeners = function(){
   handleEdit();
 };
 
-const main = function(){
-  syncStoreWithAPI();
-  bindEventListeners();
-};
 
-$(main);
+export default {
+  syncStoreWithAPI,
+  bindEventListeners,
+};
