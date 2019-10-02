@@ -1,7 +1,7 @@
 import store from './store.js';
 import api from './api.js';
 
-const createBookmarkFromForm = function() {
+const createBookmarkObjectFromForm = function() {
   let formData = new FormData(document.getElementById('newBookmarkForm'));
   let bookmarkObject = {
     title: formData.get('newBookmarkName'),
@@ -12,57 +12,11 @@ const createBookmarkFromForm = function() {
   return bookmarkObject;
 };
 
-const handleNewBookmark = function(){
-  $('.js-main-space').on('submit', function(event){
-    event.preventDefault();
-    let bookmarkObject = createBookmarkFromForm();
-    // let formData = new FormData(document.getElementById('newBookmarkForm'));
-    // let bookmarkObject = {
-    //   title: formData.get('newBookmarkName'),
-    //   rating: formData.get('rating'),
-    //   url: formData.get('newBookmarkURL'),
-    //   desc: formData.get('description'),
-    // };
-    api.createBookmark(bookmarkObject)
-      .then(newBookmark => {
-        newBookmark.expanded = false;
-        store.addBookmark(newBookmark);
-        store.adding = false;
-        storeContract();
-        renderData();
-      })
-      .catch(error => {
-        store.error = true;
-        renderError(error.message);
-      });
-  });
-};
-
-const deleteBookmark = function(){
-  $('.js-main-space').on('click', '.deleteButton', function(event){
-    event.preventDefault();
-    let obj = $(this).closest('.bookmarkContainer');
-    let id = obj.data('bookmark-id');
-    if (typeof(store.findById(id)) !== 'undefined'){
-      store.deleteBookmark(id);
-      api.deleteBookmark(id)
-        .then(function() {
-          renderData();
-        })
-        .catch(error => {
-          store.error = true;
-          renderError(error.message);
-        });
-    }
-  });
-  //syncStoreWithAPI();
-};
-
-const generateBookmarkElement = function(bookmark){
+const generateBookmarkHTML = function(bookmark){
   if(bookmark.expanded){
     return `
     <div class="bookmarkContainer" data-bookmark-url = ${bookmark.url} data-bookmark-id = ${bookmark.id}>
-      <p class="singleBookmarkContainer"><span class="bookmarkName">${bookmark.title}</span><span class="bookmarkRating"> ${bookmark.rating} </span></p>
+      <p class="singleBookmarkContainer"><span class="bookmarkName">${bookmark.title}</span><span class="bookmarkRating">Rating: ${bookmark.rating} </span></p>
       <div class="bookmarkExpanded">
         <a class="visitLink" href = '${bookmark.url}'><button class="visitButton">Visit Site!</button></a>
       </div>
@@ -84,11 +38,11 @@ const generateBookmarkElement = function(bookmark){
 
 const generateBookmarkList = function(bookmarkList){
   bookmarkList = bookmarkList.filter(element => element.rating >= store.filter);
-  const bookmarks = bookmarkList.map((bookmark) => generateBookmarkElement(bookmark));
+  const bookmarks = bookmarkList.map((bookmark) => generateBookmarkHTML(bookmark));
   return bookmarks.join('');
 };
 
-const addBookmarkHTML = function(){
+const addBookmarkFormHTML = function(){
   $('.js-main-space').html(`
   <form id="newBookmarkForm" class="newBookmarkForm" name="newBookmarkForm">
     <label class="newBookmarkURLInput" for="newBookmarkURL">Add New Bookmark: </label>
@@ -113,22 +67,19 @@ const addBookmarkHTML = function(){
   `);
 };
 
-const addButtonHTML = function() {
+const addButtonAndBookmarksHTML = function() {
   let bookmarkContainerHTML = generateBookmarkList(store.bookmarks);
   $('.js-main-space').html(`
     <div class=buttonContainer>
       <form id="js-new-filter-form">
         <button type="submit" class="newBookmark initialButton">Add New</button>
       </form>
-      <label for="dropdownContent" class= "dropdownContent initialButton"></label>
       <select id="dropdownContent" class="dropdownContent initialButton">
-        <option id="dropdownOption" value="-1">Filter By:</option>
-        <option id="dropdownOption" value="0">Show All</option>
-        <option id="dropdownOption" value="5">Five Stars</option>
-        <option id="dropdownOption" value="4">Four or more Stars</option>
-        <option id="dropdownOption" value="3">Three or more Stars</option>
-        <option id="dropdownOption" value="2">Two or more Stars</option>
-        <option id="dropdownOption" value="1">One or more Stars</option>
+        <option value="0">Show All</option>
+        <option value="5">Five Stars</option>
+        <option value="4">Four or more Stars</option>
+        <option value="3">Three or more Stars</option>
+        <option value="2">Two or more Stars</option>
       </select>
     </div>
     <div class="bookmarksContainer">
@@ -138,12 +89,17 @@ const addButtonHTML = function() {
   );
 };
 
-const renderData = function() {
+const renderData = function(filter = false) {
   renderError();
   if (store.adding){
-    addBookmarkHTML();
+    addBookmarkFormHTML();
   } else {
-    addButtonHTML();
+    if (filter){
+      let bookmarkContainerHTML = generateBookmarkList(store.bookmarks);
+      $('.bookmarksContainer').html(bookmarkContainerHTML);
+    } else {
+      addButtonAndBookmarksHTML();
+    }
   }
 };
 
@@ -157,38 +113,13 @@ const renderError = function(str) {
   }
 };
 
-const handleFilter = function(){
-  $('.js-main-space').on('change', '#dropdownContent',function() {
-    let filterValue = $('#dropdownContent').val();
-    store.filter = filterValue;
-    renderData();
-  });
-};
-
-const handleExpand = function(){
-  $('.js-main-space').on('click', '.bookmarkContainer', function() {
-    let id = $(this).data('bookmark-id');
-    let temp = store.findById(id);
-    if(typeof(temp) !== 'undefined'){
-      if (temp.expanded !== true){
-        storeContract();
-        temp.expanded = true;
-        store.expanded = true;
-      } else {
-        temp.expanded = false;
-        store.expanded = false;
-      }
-    }
-    renderData();
-  });
-};
-
-const newBookmarkClick = function(){
-  $('.js-main-space').on('click', '#js-new-filter-form', function(event){
-    event.preventDefault();
-    store.adding = true;
-    renderData();
-  });
+const storeContract = function(){
+  if (store.expanded){
+    store.bookmarks.forEach( function(bookmark){
+      bookmark.expanded = false;
+      store.expanded = false;
+    });
+  }
 };
 
 const syncStoreWithAPI = function(){
@@ -206,19 +137,93 @@ const syncStoreWithAPI = function(){
     });
 };
 
-const storeContract = function(){
-  if (store.expanded){
-    store.bookmarks.forEach( function(bookmark){
-      bookmark.expanded = false;
-      store.expanded = false;
-    });
-  }
+const handleAddingMenu = function(){
+  $('.js-main-space').on('click', '#js-new-filter-form', function(event){
+    event.preventDefault();
+    store.adding = true;
+    renderData();
+  });
+};
+
+const handleNewBookmark = function(){
+  $('.js-main-space').on('submit', function(event){
+    event.preventDefault();
+    store.adding = false;
+    storeContract();
+    store.expanded = false;
+    let bookmarkObject = createBookmarkObjectFromForm();
+    api.createBookmark(bookmarkObject)
+      .then(newBookmark => {
+        newBookmark.expanded = false;
+        store.addBookmark(newBookmark);
+        renderData();
+      })
+      .catch(error => {
+        store.error = true;
+        renderError(error.message);
+      });
+  });
+};
+
+const handleDeleteBookmark = function(){
+  $('.js-main-space').on('click', '.deleteButton', function(event){
+    event.preventDefault();
+    let obj = $(this).closest('.bookmarkContainer');
+    let id = obj.data('bookmark-id');
+    if (typeof(store.findById(id)) !== 'undefined'){
+      store.deleteBookmark(id);
+      api.deleteBookmark(id)
+        .then(function() {
+          renderData(store.filter>0);
+        })
+        .catch(error => {
+          store.error = true;
+          renderError(error.message);
+        });
+    }
+  });
+};
+
+const handleExpand = function(){
+  $('.js-main-space').on('click', '.bookmarkContainer', function() {
+    let id = $(this).data('bookmark-id');
+    let temp = store.findById(id);
+    if(typeof(temp) !== 'undefined'){
+      if (temp.expanded !== true){
+        storeContract();
+        temp.expanded = true;
+        store.expanded = true;
+      } else {
+        temp.expanded = false;
+        store.expanded = false;
+      }
+    }
+    renderData(store.filter>0);
+  });
+};
+
+const handleFilter = function(){
+  $('.js-main-space').on('change', '#dropdownContent',function() {
+    let filterValue = $('#dropdownContent').val();
+    store.filter = filterValue;
+    storeContract();
+    store.expanded = false;
+    renderData(store.filter>0);
+  });
+};
+
+const bindEventListeners = function(){
+  handleAddingMenu();
+  handleNewBookmark();
+  handleDeleteBookmark();
+  handleExpand();
+  handleFilter();
+};
+
+const main = function(){
+  syncStoreWithAPI();
+  bindEventListeners();
   renderData();
 };
 
-syncStoreWithAPI();
-newBookmarkClick();
-handleNewBookmark();
-deleteBookmark();
-handleExpand();
-handleFilter();
+$(main);

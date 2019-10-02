@@ -10,12 +10,22 @@
 .buttonContainer {
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
-.initialButton {
-  min-width: 120px;
+.dropdownContent {
+  width: 38%;
 }
+
+#js-new-filter-form {
+  width: 38%;
+}
+
+.newBookmark {
+  width: 100%;
+}
+
+
+
 
 .bookmarksContainer {
   border-width: 1px;
