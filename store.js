@@ -29,6 +29,7 @@ export default {
   bookmarks,
   adding,
   error,
+  expanded,
   filter,
   findById,
   addBookmark,

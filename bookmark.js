@@ -75,6 +75,8 @@ const generateBookmarkElement = function(bookmark){
 
 const generateBookmarkList = function(bookmarkList){
   //filter through bookmarlist based on filter property of store
+  bookmarkList = bookmarkList.filter(element => element.rating >= store.filter);
+  console.log(bookmarkList);
   const bookmarks = bookmarkList.map((bookmark) => generateBookmarkElement(bookmark));
   return bookmarks.join('');
 };
@@ -107,7 +109,7 @@ const renderData = function() {
             </span>
           </fieldset>
         <fieldset name="description">
-          <textarea rows = 10 class = "descriptionTextArea" name="description" required>Description</textarea>
+          <textarea rows = 10 class = "descriptionTextArea" name="description" placeholder="Description" required></textarea>
           <input type="submit" value="submit" class ="descriptionSubmit" name="description">
         </fieldset>
       </form>
@@ -121,13 +123,13 @@ const renderData = function() {
         </form>
         <label for="dropdownContent" class= "initialButton"></label>
         <select id="dropdownContent" class="dropdownContent">
-          <option value="">Filter By:</option>
-          <option value="0">Show All</option>
-          <option value="5">Five Stars</option>
-          <option value="4">Four Stars</option>
-          <option value="3">Three Stars</option>
-          <option value="2">Two Stars</option>
-          <option value="1">One Stars</option>
+          <option id="dropdownOption" value="-1">Filter By:</option>
+          <option id="dropdownOption" value="0">Show All</option>
+          <option id="dropdownOption" value="5">Five Stars</option>
+          <option id="dropdownOption" value="4">Four Stars</option>
+          <option id="dropdownOption" value="3">Three Stars</option>
+          <option id="dropdownOption" value="2">Two Stars</option>
+          <option id="dropdownOption" value="1">One Stars</option>
         </select>
       </div>
       <div class="bookmarksContainer">
@@ -146,6 +148,14 @@ const renderError = function(str) {
   } else {
     $('.js-error-space').empty();
   }
+};
+
+const handleFilter = function(){
+  $('.js-main-space').on('change', '#dropdownContent',function() {
+    let filterValue = $('#dropdownContent').val();
+    store.filter = filterValue;
+    renderData();
+  });
 };
 
 const handleExpand = function(){
@@ -204,3 +214,4 @@ newBookmarkClick();
 handleNewBookmark();
 deleteBookmark();
 handleExpand();
+handleFilter();
