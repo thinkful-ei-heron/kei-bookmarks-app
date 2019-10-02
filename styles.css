@@ -94,11 +94,16 @@ body {
   font-size: 14pt;
 }
 
-.descriptionSubmit {
+.descriptionSubmit, .cancelSubmit {
   display: block;
   padding: 0px;
   font-family: 'Roboto', sans-serif;
   font-size: 14pt;
+  width: 100%;
+}
+
+.cancelSubmit {
+  margin-top: 15px;
 }
 
 .descriptionTextArea {
@@ -106,10 +111,6 @@ body {
   height: 100%;
   font-size: 14pt;
   font-family: 'Roboto', sans-serif;
-}
-
-.descriptionSubmit {
-  width: 100%;
 }
 
 .visitButton, .deleteButton, .editButton {

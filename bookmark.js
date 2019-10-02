@@ -88,6 +88,7 @@ const addBookmarkFormHTML = function(edit = false, id){
       <h2 class="sub-title">${temp.url}</h2>
       ${ratingAndDescHTML(temp.desc, 'Edit')}
     </form>
+    <input type="submit" class="cancelSubmit" name="cancelSubmit" value="Return to Home">
     `);
   } else {
     $('.js-main-space').html(`
@@ -97,7 +98,8 @@ const addBookmarkFormHTML = function(edit = false, id){
       <label for="new-bookmark-name" name="new-bookmark-name">Title Your Bookmark:</label>
       <input class="newBookmarkNameInput" type= "text" name="new-bookmark-name" id="new-bookmark-name" placeholder="Wikipedia Homepage" oninvalid="alert('Please enter a title!');" required/>
       ${ratingAndDescHTML('', 'Add')}
-      </form>
+    </form>
+    <input type="submit" class="cancelSubmit" name="cancelSubmit" value="Return to Home">
     `);
   }
 };
@@ -180,6 +182,14 @@ const handleAddingMenu = function(){
   $('.js-main-space').on('click', '#js-new-filter-form', function(event){
     event.preventDefault();
     store.adding = true;
+    renderData();
+  });
+};
+
+const handleCancelAdd = function() {
+  $('.js-main-space').on('click', '.cancelSubmit', function(event){
+    event.preventDefault();
+    store.adding = false;
     renderData();
   });
 };
@@ -273,7 +283,6 @@ const handlePostEdit = function(id) {
     store.expanded = false;
     let bookmarkObject = createUpdateObjectFromForm();
     store.updateBookmark(id, bookmarkObject);
-    //passing function param
     api.updateBookmark(id, bookmarkObject)
       .then(function () {
         renderData();
@@ -292,6 +301,7 @@ const bindEventListeners = function(){
   handleExpand();
   handleFilter();
   handleEdit();
+  handleCancelAdd();
 };
 
 
