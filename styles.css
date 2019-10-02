@@ -2,35 +2,20 @@
   box-sizing: border-box;
 }
 
-/* body {
-  font-family: 'Roboto', sans-serif;
-}; */
-
 .title {
   text-align: center;
   font-family: 'Roboto', sans-serif;
 }
 
-
-
 .buttonContainer {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .initialButton {
-  display: inline-block;
-  min-width: 100px;
+  min-width: 120px;
 }
-
-/* .dropdown {
-  position: relative;
-  display: inline-block;
-} */
-
-/* .dropdownContent {
-  position: relative;
-} */
 
 .bookmarksContainer {
   border-width: 1px;
@@ -99,9 +84,3 @@
   margin-left: 5px;
   margin-right: 5px;
 }
-
-.hiddenURL, .hiddenID {
-  display: none;
-  margin: 0;
-}
-

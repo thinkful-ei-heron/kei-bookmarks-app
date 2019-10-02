@@ -4,7 +4,6 @@ import api from './api.js';
 const handleNewBookmark = function(){
   $('.js-main-space').on('submit', function(event){
     event.preventDefault();
-    console.log('hi');
     let formData = new FormData(document.getElementById('newBookmarkForm'));
     let bookmarkObject = {
       title: formData.get('newBookmarkName'),
@@ -17,13 +16,13 @@ const handleNewBookmark = function(){
         newBookmark.expanded = false;
         store.addBookmark(newBookmark);
         store.adding = false;
+        storeContract();
         renderData();
       })
       .catch(error => {
         store.error = true;
         renderError(error.message);
       });
-    console.log('added');
   });
 };
 
@@ -67,8 +66,6 @@ const generateBookmarkElement = function(bookmark){
     return `
     <div class="bookmarkContainer" data-bookmark-url = ${bookmark.url} data-bookmark-id = ${bookmark.id}>
       <p class="singleBookmarkContainer"><span class="bookmarkName">${bookmark.title}</span><span class="bookmarkRating">Rating: ${bookmark.rating}</span></p>
-      <p class="hiddenURL" data-bookmark-url = ${bookmark.url}></p>
-      <p class="hiddenID" data-bookmark-id = ${bookmark.id}></p>
     </div> `;
   }
 };
@@ -76,7 +73,6 @@ const generateBookmarkElement = function(bookmark){
 const generateBookmarkList = function(bookmarkList){
   //filter through bookmarlist based on filter property of store
   bookmarkList = bookmarkList.filter(element => element.rating >= store.filter);
-  console.log(bookmarkList);
   const bookmarks = bookmarkList.map((bookmark) => generateBookmarkElement(bookmark));
   return bookmarks.join('');
 };
@@ -86,32 +82,24 @@ const renderData = function() {
   if (store.adding){
     $('.js-main-space').html(`
       <form id="newBookmarkForm" class="newBookmarkForm" name="newBookmarkForm">
-        <fieldset name="bookmark-url-input">
-          <label class="newBookmarkURLInput" for="newBookmarkURL">Add New Bookmark: </label>
-          <input class="newBookmarkURLInput" type="text" name="newBookmarkURL" id="newBookmarkURL" placeholder="http://www.wikipedia.org" required/>
-        </fieldset>
-        <fieldset name="bookmark-name-input">
-          <label for="newBookmarkName" name="newBookmarkName">Title Your Bookmark:</label>
-          <input class="newBookmarkNameInput" type= "text" name="newBookmarkName" id="newBookmarkName" placeholder="Wikipedia Homepage" required/>
-        </fieldset>
-        <fieldset name="bookmark-rating" class="bookmarkRating">
-          <span class="starRating">
-              <input id="rating5" type="radio" name="rating" value="5">
-              <label for="rating5">5</label>
-              <input id="rating4" type="radio" name="rating" value="4">
-              <label for="rating4">4</label>
-              <input id="rating3" type="radio" name="rating" value="3">
-              <label for="rating3">3</label>
-              <input id="rating2" type="radio" name="rating" value="2">
-              <label for="rating2">2</label>
-              <input id="rating1" type="radio" name="rating" value="1">
-              <label for="rating1">1</label>
-            </span>
-          </fieldset>
-        <fieldset name="description">
-          <textarea rows = 10 class = "descriptionTextArea" name="description" placeholder="Description" required></textarea>
-          <input type="submit" value="submit" class ="descriptionSubmit" name="description">
-        </fieldset>
+        <label class="newBookmarkURLInput" for="newBookmarkURL">Add New Bookmark: </label>
+        <input class="newBookmarkURLInput" type="url" name="newBookmarkURL" id="newBookmarkURL" placeholder="http://www.wikipedia.org" oninvalid="alert('Please enter a valid URL. Do not forget the https protocol!');" required/>
+        <label for="newBookmarkName" name="newBookmarkName">Title Your Bookmark:</label>
+        <input class="newBookmarkNameInput" type= "text" name="newBookmarkName" id="newBookmarkName" placeholder="Wikipedia Homepage" oninvalid="alert('Please enter a title!');" required/>
+        <span class="starRating">
+            <input id="rating5" type="radio" name="rating" value="5" oninvalid="alert('Please select a rating!');" required>
+            <label for="rating5">5</label>
+            <input id="rating4" type="radio" name="rating" value="4" required>
+            <label for="rating4">4</label>
+            <input id="rating3" type="radio" name="rating" value="3" required>
+            <label for="rating3">3</label>
+            <input id="rating2" type="radio" name="rating" value="2" required>
+            <label for="rating2">2</label>
+            <input id="rating1" type="radio" name="rating" value="1" required>
+            <label for="rating1">1</label>
+          </span>
+        <textarea rows = 10 class = "descriptionTextArea" name="description" placeholder="Description" oninvalid="alert('Please enter a description!');" required></textarea>
+        <input type="submit" class ="descriptionSubmit" name="description" required>
       </form>
     `);
   } else {
@@ -122,14 +110,14 @@ const renderData = function() {
           <button type="submit" class="newBookmark initialButton">Add New</button>
         </form>
         <label for="dropdownContent" class= "initialButton"></label>
-        <select id="dropdownContent" class="dropdownContent">
+        <select id="dropdownContent" class="dropdownContent initialButton">
           <option id="dropdownOption" value="-1">Filter By:</option>
           <option id="dropdownOption" value="0">Show All</option>
           <option id="dropdownOption" value="5">Five Stars</option>
-          <option id="dropdownOption" value="4">Four Stars</option>
-          <option id="dropdownOption" value="3">Three Stars</option>
-          <option id="dropdownOption" value="2">Two Stars</option>
-          <option id="dropdownOption" value="1">One Stars</option>
+          <option id="dropdownOption" value="4">Four or more Stars </option>
+          <option id="dropdownOption" value="3">Three or more Stars</option>
+          <option id="dropdownOption" value="2">Two or more Stars</option>
+          <option id="dropdownOption" value="1">One or more Stars</option>
         </select>
       </div>
       <div class="bookmarksContainer">
