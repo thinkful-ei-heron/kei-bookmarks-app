@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="styles.css" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Slab&display=swap" rel="stylesheet" />
+  <title>My Bookmarks</title>
+</head>
+<body>
+  <header role="banner" class="banner">
+    <h1 class="title">My Bookmarks</h1>
+  </header>
+
+  <main class ="main">
+    <form id="newBookmarkForm" class="newBookmarkForm" name="newBookmarkForm">
+      <fieldset name="bookmark-url-input">
+        <label class="newBookmarkURLInput" for="newBookmarkURL">Add New Bookmark: </label>
+        <input class="newBookmarkURLInput" type="text" name="newBookmarkURL" id="newBookmarkURLInput" placeholder="http://www.wikipedia.org" required/>
+      </fieldset>
+
+      <fieldset name="bookmark-name-input">
+        <label name="newBookmarkName">Title Your Bookmark:</label>
+        <input class="newBookmarkNameInput" type= "text" name="newBookmarkName" id="newBookmarkNameInput" placeholder="Wikipedia Homepage" required/>
+      </fieldset>
+
+      <fieldset name="bookmark-rating" class="bookmarkRating">
+        <span class="starRating">
+            <input id="rating5" type="radio" name="rating" value="5">
+            <label for="rating5">5</label>
+            <input id="rating4" type="radio" name="rating" value="4">
+            <label for="rating4">4</label>
+            <input id="rating3" type="radio" name="rating" value="3">
+            <label for="rating3">3</label>
+            <input id="rating2" type="radio" name="rating" value="2">
+            <label for="rating2">2</label>
+            <input id="rating1" type="radio" name="rating" value="1">
+            <label for="rating1">1</label>
+        </span>
+      </fieldset>
+
+      <fieldset name="description">
+        <textarea rows = 10 class = "descriptionTextArea" name="description" required>Description</textarea>
+        <input type="submit" value="submit" class ="descriptionSubmit" name="description">
+      </fieldset>
+    </form>
+  </main>
+  <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+  <script src="bookmark_form.js"></script>
+</body>
+</html>
