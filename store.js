@@ -22,7 +22,9 @@ const deleteBookmark = function(id){
 
 const updateBookmark = function(id, newData){
   let currentBookmark = this.findById(id);
+  console.log(newData);
   Object.assign(currentBookmark, newData);
+  console.log(currentBookmark, 'in updatebookmark');
 };
 
 export default {

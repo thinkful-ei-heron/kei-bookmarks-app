@@ -12,6 +12,15 @@ const createBookmarkObjectFromForm = function() {
   return bookmarkObject;
 };
 
+const createUpdateObjectFromForm = function() {
+  let formData = new FormData(document.getElementById('editBookmarkForm'));
+  let bookmarkObject = {
+    rating: formData.get('rating'),
+    desc: formData.get('description'),
+  };
+  return bookmarkObject;
+};
+
 const generateBookmarkHTML = function(bookmark){
   if(bookmark.expanded){
     return `
@@ -23,9 +32,8 @@ const generateBookmarkHTML = function(bookmark){
       <div class="descriptionExpanded">
         <p>${bookmark.desc}</p>
       </div>
-      <div class="deleteButton">
-        <button class="deleteButton">Delete Bookmark</button>
-      </div>  
+      <button class="editButton" id="editButton">Edit Bookmark</button>
+      <button class="deleteButton">Delete Bookmark</button>
     </div>
     `;
   } else {
@@ -42,29 +50,56 @@ const generateBookmarkList = function(bookmarkList){
   return bookmarks.join('');
 };
 
-const addBookmarkFormHTML = function(){
-  $('.js-main-space').html(`
-  <form id="newBookmarkForm" class="newBookmarkForm" name="newBookmarkForm">
-    <label class="newBookmarkURLInput" for="newBookmarkURL">Add New Bookmark: </label>
-    <input class="newBookmarkURLInput" type="url" name="newBookmarkURL" id="newBookmarkURL" placeholder="http://www.wikipedia.org" oninvalid="alert('Please enter a valid URL. Do not forget the https protocol!');" required/>
-    <label for="newBookmarkName" name="newBookmarkName">Title Your Bookmark:</label>
-    <input class="newBookmarkNameInput" type= "text" name="newBookmarkName" id="newBookmarkName" placeholder="Wikipedia Homepage" oninvalid="alert('Please enter a title!');" required/>
-    <span class="starRating">
-        <input id="rating5" type="radio" name="rating" value="5" oninvalid="alert('Please select a rating!');" required>
-        <label for="rating5">5</label>
-        <input id="rating4" type="radio" name="rating" value="4" required>
-        <label for="rating4">4</label>
-        <input id="rating3" type="radio" name="rating" value="3" required>
-        <label for="rating3">3</label>
-        <input id="rating2" type="radio" name="rating" value="2" required>
-        <label for="rating2">2</label>
-        <input id="rating1" type="radio" name="rating" value="1" required>
-        <label for="rating1">1</label>
-      </span>
-    <textarea rows = 10 class = "descriptionTextArea" name="description" placeholder="Description" oninvalid="alert('Please enter a description!');" required></textarea>
-    <input type="submit" class ="descriptionSubmit" name="description" required>
-  </form>
-  `);
+const addBookmarkFormHTML = function(edit = false, id){
+  if (edit){
+    console.log('inside edit is true branch');
+    let temp = store.findById(id);
+    console.log(temp.title);
+    $('.js-main-space').html(`
+    <form id="editBookmarkForm" class="editBookmarkForm" name="editBookmarkForm">
+      <h2>${temp.title}</h2>
+      <h2>${temp.url}</h2>
+      <span class="starRating">
+          <input id="rating5" type="radio" name="rating" value="5" oninvalid="alert('Please select a rating!');" required>
+          <label for="rating5">5</label>
+          <input id="rating4" type="radio" name="rating" value="4" required>
+          <label for="rating4">4</label>
+          <input id="rating3" type="radio" name="rating" value="3" required>
+          <label for="rating3">3</label>
+          <input id="rating2" type="radio" name="rating" value="2" required>
+          <label for="rating2">2</label>
+          <input id="rating1" type="radio" name="rating" value="1" required>
+          <label for="rating1">1</label>
+        </span>
+      <textarea rows = 10 class = "descriptionTextArea" name="description" placeholder="Description" oninvalid="alert('Please enter a description!');" required>${temp.desc}</textarea>
+      <input type="submit" class ="descriptionSubmit" name="description" required>
+    </form>
+    `);
+  } else {
+    console.log('in the else branch for some reason');
+    $('.js-main-space').html(`
+    <form id="newBookmarkForm" class="newBookmarkForm" name="newBookmarkForm">
+      <label class="newBookmarkURLInput" for="newBookmarkURL">Add New Bookmark: </label>
+      <input class="newBookmarkURLInput" type="url" name="newBookmarkURL" id="newBookmarkURL" placeholder="http://www.wikipedia.org" oninvalid="alert('Please enter a valid URL. Do not forget the https protocol!');" required/>
+      <label for="newBookmarkName" name="newBookmarkName">Title Your Bookmark:</label>
+      <input class="newBookmarkNameInput" type= "text" name="newBookmarkName" id="newBookmarkName" placeholder="Wikipedia Homepage" oninvalid="alert('Please enter a title!');" required/>
+      <span class="starRating">
+          <input id="rating5" type="radio" name="rating" value="5" oninvalid="alert('Please select a rating!');" required>
+          <label for="rating5">5</label>
+          <input id="rating4" type="radio" name="rating" value="4" required>
+          <label for="rating4">4</label>
+          <input id="rating3" type="radio" name="rating" value="3" required>
+          <label for="rating3">3</label>
+          <input id="rating2" type="radio" name="rating" value="2" required>
+          <label for="rating2">2</label>
+          <input id="rating1" type="radio" name="rating" value="1" required>
+          <label for="rating1">1</label>
+        </span>
+      <textarea rows = 10 class = "descriptionTextArea" name="description" placeholder="Description" oninvalid="alert('Please enter a description!');" required></textarea>
+      <input type="submit" class ="descriptionSubmit" name="description" required>
+    </form>
+    `);
+  }
 };
 
 const addButtonAndBookmarksHTML = function() {
@@ -89,10 +124,16 @@ const addButtonAndBookmarksHTML = function() {
   );
 };
 
-const renderData = function(filter = false) {
+const renderData = function(filter = false, edit = false, id) {
+  console.log('running renderdata');
   renderError();
   if (store.adding){
-    addBookmarkFormHTML();
+    if (edit){
+      console.log('about to addbookmarkformhtml');
+      addBookmarkFormHTML(true, id);
+    } else {
+      addBookmarkFormHTML();
+    }
   } else {
     if (filter){
       let bookmarkContainerHTML = generateBookmarkList(store.bookmarks);
@@ -146,7 +187,7 @@ const handleAddingMenu = function(){
 };
 
 const handleNewBookmark = function(){
-  $('.js-main-space').on('submit', function(event){
+  $('.js-main-space').on('submit', '.newBookmarkForm', function(event){
     event.preventDefault();
     store.adding = false;
     storeContract();
@@ -198,7 +239,7 @@ const handleExpand = function(){
         store.expanded = false;
       }
     }
-    renderData(store.filter>0);
+    renderData(store.filter>0, true, id);
   });
 };
 
@@ -212,18 +253,53 @@ const handleFilter = function(){
   });
 };
 
+const handleAddingEditMenu = function(){
+  let id;
+  $('.js-main-space').on('click', '.editButton', function(event) {
+    event.preventDefault();
+    let obj = $(this).closest('.bookmarkContainer');
+    id = obj.data('bookmark-id');
+    store.adding = true;
+    console.log('before renderdata');
+    renderData(true, true, id);
+    console.log('after handleaddingeditmenu renderdata');
+    handlePostEdit(id);  
+  });
+};
+
+const handlePostEdit = function(id) {
+  $('.js-main-space').on('submit', '#editBookmarkForm', function(){
+    event.preventDefault();
+    store.adding = false;
+    storeContract();
+    store.expanded = false;
+    let bookmarkObject = createUpdateObjectFromForm();
+    console.log(id);
+    console.log(bookmarkObject);
+    store.updateBookmark(id, bookmarkObject);
+    api.updateBookmark(id, bookmarkObject)
+      .then(newBookmark => {
+        renderData();
+      })
+      .catch(error => {
+        store.error = true;
+        renderError(error.message);
+      });
+  });
+};
+
 const bindEventListeners = function(){
   handleAddingMenu();
   handleNewBookmark();
   handleDeleteBookmark();
   handleExpand();
   handleFilter();
+  handleAddingEditMenu();
 };
 
 const main = function(){
   syncStoreWithAPI();
   bindEventListeners();
-  renderData();
 };
 
 $(main);
