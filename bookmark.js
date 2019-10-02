@@ -2,11 +2,11 @@ import store from './store.js';
 import api from './api.js';
 
 const createBookmarkObjectFromForm = function() {
-  let formData = new FormData(document.getElementById('newBookmarkForm'));
+  let formData = new FormData(document.getElementById('new-bookmark-form'));
   let bookmarkObject = {
     title: formData.get('new-bookmark-name'),
     rating: formData.get('rating'),
-    url: formData.get('newBookmarkURL'),
+    url: formData.get('new-bookmark-url'),
     desc: formData.get('description'),
   };
   return bookmarkObject;
@@ -91,9 +91,9 @@ const addBookmarkFormHTML = function(edit = false, id){
     `);
   } else {
     $('.js-main-space').html(`
-    <form id="newBookmarkForm" class="newBookmarkForm" name="newBookmarkForm">
-      <label class="newBookmarkURLInput" for="newBookmarkURL">Add New Bookmark: </label>
-      <input class="newBookmarkURLInput" type="url" name="newBookmarkURL" id="newBookmarkURL" placeholder="http://www.wikipedia.org" oninvalid="alert('Please enter a valid URL. Do not forget the https protocol!');" required/>
+    <form id="new-bookmark-form" class="new-bookmark-form" name="new-bookmark-form">
+      <label class="new-bookmark-url-input" for="new-bookmark-url">Add New Bookmark: </label>
+      <input class="new-bookmark-url-input" type="url" name="new-bookmark-url" id="new-bookmark-url" placeholder="http://www.wikipedia.org" oninvalid="alert('Please enter a valid URL. Do not forget the https protocol!');" required/>
       <label for="new-bookmark-name" name="new-bookmark-name">Title Your Bookmark:</label>
       <input class="newBookmarkNameInput" type= "text" name="new-bookmark-name" id="new-bookmark-name" placeholder="Wikipedia Homepage" oninvalid="alert('Please enter a title!');" required/>
       ${ratingAndDescHTML('', 'Add')}
@@ -105,11 +105,11 @@ const addBookmarkFormHTML = function(edit = false, id){
 const addButtonAndBookmarksHTML = function() {
   let bookmarkContainerHTML = generateBookmarkList(store.bookmarks);
   $('.js-main-space').html(`
-    <div class=buttonContainer>
+    <div class=button-container>
       <form id="js-new-filter-form">
-        <button type="submit" class="newBookmark initialButton">Add New</button>
+        <button type="submit" class="new-bookmark initial-button">Add New</button>
       </form>
-      <select id="dropdownContent" class="dropdownContent initialButton">
+      <select id="dropdown-content" class="dropdown-content initial-button">
         <option value="0">Show All</option>
         <option value="5">Five Stars</option>
         <option value="4">Four or more Stars</option>
@@ -117,7 +117,7 @@ const addButtonAndBookmarksHTML = function() {
         <option value="2">Two or more Stars</option>
       </select>
     </div>
-    <div class="bookmarksContainer">
+    <div class="bookmarks-container">
       ${bookmarkContainerHTML}
     </div>
   `
@@ -135,7 +135,7 @@ const renderData = function(filter = false, edit = false, id) {
   } else {
     if (filter){
       let bookmarkContainerHTML = generateBookmarkList(store.bookmarks);
-      $('.bookmarksContainer').html(bookmarkContainerHTML);
+      $('.bookmarks-container').html(bookmarkContainerHTML);
     } else {
       addButtonAndBookmarksHTML();
     }
@@ -145,7 +145,7 @@ const renderData = function(filter = false, edit = false, id) {
 const renderError = function(str) {
   if (store.error){
     $('.js-error-space').html(`
-      <p id="myPopup">ERROR: ${str}</p>
+      <p class="my-popup" id="my-popup">ERROR: ${str}</p>
     `);
   } else {
     $('.js-error-space').empty();
@@ -185,7 +185,7 @@ const handleAddingMenu = function(){
 };
 
 const handleNewBookmark = function(){
-  $('.js-main-space').on('submit', '.newBookmarkForm', function(event){
+  $('.js-main-space').on('submit', '.new-bookmark-form', function(event){
     event.preventDefault();
     store.adding = false;
     storeContract();
@@ -242,8 +242,8 @@ const handleExpand = function(){
 };
 
 const handleFilter = function(){
-  $('.js-main-space').on('change', '#dropdownContent',function() {
-    let filterValue = $('#dropdownContent').val();
+  $('.js-main-space').on('change', '#dropdown-content',function() {
+    let filterValue = $('#dropdown-content').val();
     store.filter = filterValue;
     storeContract();
     store.expanded = false;
@@ -275,7 +275,7 @@ const handlePostEdit = function(id) {
     store.updateBookmark(id, bookmarkObject);
     //passing function param
     api.updateBookmark(id, bookmarkObject)
-      .then(newBookmark => {
+      .then(function () {
         renderData();
       })
       .catch(error => {

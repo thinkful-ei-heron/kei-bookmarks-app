@@ -25,17 +25,17 @@ body {
   font-size: 14pt;
 }
 
-.buttonContainer {
+.button-container {
   display: flex;
   justify-content: center;
   min-height: 35px;
 }
 
-.initialButton {
+.initial-button {
   min-height: 35px;
   font-size: 14pt;
 }
-.dropdownContent {
+.dropdown-content {
   width: 38%;
   text-align: center;
   font-size: 14pt;
@@ -45,11 +45,11 @@ body {
   width: 38%;
 }
 
-.newBookmarkURLInput {
+.new-bookmark-url-input {
   margin-bottom: 15px;
 }
 
-.newBookmark {
+.new-bookmark {
   width: 100%;
 }
 
@@ -57,7 +57,7 @@ body {
   text-align: center;
 }
 
-.bookmarksContainer {
+.bookmarks-container {
   border-width: 1px;
   border-style: solid;
   margin: 2%;
@@ -81,7 +81,7 @@ body {
   font-size: 16pt;
 }
 
-#newBookmarkURL, #new-bookmark-name {
+#new-bookmark-url, #new-bookmark-name {
   display: block;
   width: 100%;
   font-size: 16pt;
