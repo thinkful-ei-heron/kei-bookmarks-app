@@ -118,18 +118,17 @@ const renderData = function() {
       <div class=buttonContainer>
         <form id="js-new-filter-form">
           <button type="submit" class="newBookmark initialButton">Add New</button>
-          <div class="dropdown">
-              <button type="button" class="dropdownButton initialButton">Filter By</button>
-              <div id="dropdownContent" class="dropdownContent">
-                <p>Five Stars</p>
-                <p>Four Stars</p>
-                <p>Three Stars</p>
-                <p>Two Stars</p>
-                <p>One Star</p>
-                <p>All Bookmarks</p>
-              </div>
-          </div>
         </form>
+        <label for="dropdownContent" class= "initialButton"></label>
+        <select id="dropdownContent" class="dropdownContent">
+          <option value="">Filter By:</option>
+          <option value="0">Show All</option>
+          <option value="5">Five Stars</option>
+          <option value="4">Four Stars</option>
+          <option value="3">Three Stars</option>
+          <option value="2">Two Stars</option>
+          <option value="1">One Stars</option>
+        </select>
       </div>
       <div class="bookmarksContainer">
         ${bookmarkContainerHTML}
@@ -151,11 +150,17 @@ const renderError = function(str) {
 
 const handleExpand = function(){
   $('.js-main-space').on('click', '.bookmarkContainer', function() {
-    storeContract();
     let id = $(this).data('bookmark-id');
     let temp = store.findById(id);
     if(typeof(temp) !== 'undefined'){
-      temp.expanded = true;
+      if (temp.expanded !== true){
+        storeContract();
+        temp.expanded = true;
+        store.expanded = true;
+      } else {
+        temp.expanded = false;
+        store.expanded = false;
+      }
     }
     renderData();
   });
@@ -185,9 +190,12 @@ const syncStoreWithAPI = function(){
 };
 
 const storeContract = function(){
-  store.bookmarks.forEach( function(bookmark){
-    bookmark.expanded = false;
-  });
+  if (store.expanded){
+    store.bookmarks.forEach( function(bookmark){
+      bookmark.expanded = false;
+      store.expanded = false;
+    });
+  }
   renderData();
 };
 

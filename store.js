@@ -1,6 +1,7 @@
 const bookmarks = [];
 let adding = false;
 let error = false;
+let expanded = false;
 let filter = 0;
 
 const getIdFromElement = function(item) {
