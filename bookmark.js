@@ -75,15 +75,15 @@ const ratingAndDescHTML = function(desc='', typeOfPost){
     <input id="rating1" type="radio" name="rating" value="1" required>
     <label for="rating1">1</label>
   </label>
-  <textarea rows = 10 class = "descriptionTextArea" name="description" placeholder="Description" oninvalid="alert('Please enter a description!');" required>${desc}</textarea>
-  <input type="submit" class ="descriptionSubmit" name="description" value="${typeOfPost} Bookmark" required>`;
+  <textarea rows = "10" class = "descriptionTextArea" name="description" placeholder="Description" oninvalid="alert('Please enter a description!');" required>${desc}</textarea>
+  <input type="submit" class ="description-submit" name="description" value="${typeOfPost} Bookmark" required>`;
 };
 
 const addBookmarkFormHTML = function(edit = false, id){
   if (edit){
     let temp = store.findById(id);
     $('.js-main-space').html(`
-    <form id="edit-bookmark-form" class="edit-bookmark-form" name="edit-bookmark-form">
+    <form id="edit-bookmark-form" class="edit-bookmark-form" name="edit-bookmark-form" data-bookmark-id= ${id}>
       <h2 class="sub-title">${temp.title}</h2>
       <h2 class="sub-title">${temp.url}</h2>
       ${ratingAndDescHTML(temp.desc, 'Edit')}
@@ -261,10 +261,9 @@ const handleFilter = function(){
   });
 };
 
-const handleEdit = function(){
+const handleEditMenu = function(){
   let id;
   $('.js-main-space').on('click', '.edit-button', function(event) {
-    console.log('handle edit eventhandler');
     event.preventDefault();
     let obj = $(this).closest('.bookmarkContainer');
     id = obj.data('bookmark-id');
@@ -272,17 +271,18 @@ const handleEdit = function(){
     store.edit = true;
     renderData(store.filter>0, store.edit, id);
     store.edit = false; 
-    handlePostEdit(id); 
   });
 };
 
-const handlePostEdit = function(id) {
+const handlePostEdit = function() {
   $('.js-main-space').on('submit', '#edit-bookmark-form', function(event){
     event.preventDefault();
     store.adding = false;
     storeContract();
     store.expanded = false;
     let bookmarkObject = createUpdateObjectFromForm();
+    let obj = $(this);
+    let id = obj.data('bookmark-id');
     store.updateBookmark(id, bookmarkObject);
     api.updateBookmark(id, bookmarkObject)
       .then(function () {
@@ -292,7 +292,6 @@ const handlePostEdit = function(id) {
         store.error = true;
         renderError(error.message);
       });
-    event.stopPropagation();
   });
 };
 
@@ -302,7 +301,8 @@ const bindEventListeners = function(){
   handleDeleteBookmark();
   handleExpand();
   handleFilter();
-  handleEdit();
+  handleEditMenu();
+  handlePostEdit();
   handleCancelAdd();
 };
 
