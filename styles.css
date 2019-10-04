@@ -113,7 +113,7 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-.visitButton, .deleteButton, .editButton {
+.visitButton, .deleteButton, .edit-button {
   display: inline-block;
   margin: auto;
   margin-top: 5px;

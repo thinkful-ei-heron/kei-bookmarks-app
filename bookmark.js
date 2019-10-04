@@ -13,7 +13,7 @@ const createBookmarkObjectFromForm = function() {
 };
 
 const createUpdateObjectFromForm = function() {
-  let formData = new FormData(document.getElementById('editBookmarkForm'));
+  let formData = new FormData(document.getElementById('edit-bookmark-form'));
   let bookmarkObject = {
     rating: formData.get('rating'),
     desc: formData.get('description'),
@@ -43,7 +43,7 @@ const generateBookmarkHTML = function(bookmark){
       <div class="descriptionExpanded">
         <p>${bookmark.desc}</p>
       </div>
-      <button class="editButton" id="editButton">Edit Bookmark</button>
+      <button class="edit-button" id="edit-button">Edit Bookmark</button>
       <button class="deleteButton">Delete Bookmark</button>
     </div>
     `;
@@ -83,7 +83,7 @@ const addBookmarkFormHTML = function(edit = false, id){
   if (edit){
     let temp = store.findById(id);
     $('.js-main-space').html(`
-    <form id="editBookmarkForm" class="editBookmarkForm" name="editBookmarkForm">
+    <form id="edit-bookmark-form" class="edit-bookmark-form" name="edit-bookmark-form">
       <h2 class="sub-title">${temp.title}</h2>
       <h2 class="sub-title">${temp.url}</h2>
       ${ratingAndDescHTML(temp.desc, 'Edit')}
@@ -263,20 +263,21 @@ const handleFilter = function(){
 
 const handleEdit = function(){
   let id;
-  $('.js-main-space').on('click', '.editButton', function(event) {
+  $('.js-main-space').on('click', '.edit-button', function(event) {
+    console.log('handle edit eventhandler');
     event.preventDefault();
     let obj = $(this).closest('.bookmarkContainer');
     id = obj.data('bookmark-id');
     store.adding = true;
     store.edit = true;
     renderData(store.filter>0, store.edit, id);
-    handlePostEdit(id); 
     store.edit = false; 
+    handlePostEdit(id); 
   });
 };
 
 const handlePostEdit = function(id) {
-  $('.js-main-space').on('submit', '#editBookmarkForm', function(){
+  $('.js-main-space').on('submit', '#edit-bookmark-form', function(event){
     event.preventDefault();
     store.adding = false;
     storeContract();
@@ -291,6 +292,7 @@ const handlePostEdit = function(id) {
         store.error = true;
         renderError(error.message);
       });
+    event.stopPropagation();
   });
 };
 
