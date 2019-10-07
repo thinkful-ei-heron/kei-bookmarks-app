@@ -62,6 +62,12 @@ const generateBookmarkList = function(bookmarkList){
 };
 
 const ratingAndDescHTML = function(desc='', typeOfPost){
+  let str = '';
+  if (typeOfPost === 'Edit'){
+    str = 'Submit Changes';
+  } else {
+    str = 'Add Bookmark';
+  }
   return `
   <label class="starRating"><b>Rating:</b>
     <input id="rating5" type="radio" name="rating" value="5" oninvalid="alert('Please select a rating!');" required>
@@ -76,7 +82,7 @@ const ratingAndDescHTML = function(desc='', typeOfPost){
     <label for="rating1">1</label>
   </label>
   <textarea rows = "10" class = "descriptionTextArea" name="description" placeholder="Description" oninvalid="alert('Please enter a description!');" required>${desc}</textarea>
-  <input type="submit" class ="description-submit" name="description" value="${typeOfPost} Bookmark" required>`;
+  <input type="submit" class ="description-submit" name="description" value="${str}" required>`;
 };
 
 const addBookmarkFormHTML = function(edit = false, id){
